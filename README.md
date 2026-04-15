@@ -39,7 +39,12 @@ Then restart Claude Code.
 | `/aso screenshots compose` | Generate marketing images with Gemini AI |
 | `/aso screenshots upload` | Upload screenshots to ASC |
 | `/aso icons generate` | AI icon generation (27+ preset styles) |
+| `/aso translate` | AI-translate metadata to other locales |
+| `/aso competitor` | Competitor keyword analysis with AI |
+| `/aso whats-new` | Generate "What's New" from git history |
+| `/aso score` | ASO readiness score with recommendations |
 | `/aso check` | Apple Review Guidelines compliance (100+ checks) |
+| `/aso privacy-manifest` | Auto-generate PrivacyInfo.xcprivacy |
 
 ## Demo
 
@@ -106,10 +111,20 @@ During setup, you'll be asked for:
   │ capture          │     │ compose (AI)     │     │ to ASC   │
   └──────────────────┘     └──────────────────┘     └──────────┘
 
-  ┌──────────────────┐     ┌──────────────────┐
-  │ icons generate   │     │ check (100+      │
-  │ (AI, 27+ styles) │     │ Apple guidelines)│
-  └──────────────────┘     └──────────────────┘
+  ┌──────────────────┐     ┌──────────────────┐     ┌──────────────────┐
+  │ translate        │     │ competitor       │     │ whats-new        │
+  │ (AI, all locales)│     │ (AI keyword gap) │     │ (git → release)  │
+  └──────────────────┘     └──────────────────┘     └──────────────────┘
+
+  ┌──────────────────┐     ┌──────────────────┐     ┌──────────────────┐
+  │ icons generate   │     │ check (100+      │     │ privacy-manifest │
+  │ (AI, 27+ styles) │     │ Apple guidelines)│     │ (auto-scan)      │
+  └──────────────────┘     └──────────────────┘     └──────────────────┘
+
+  ┌──────────────────┐
+  │ score            │
+  │ (ASO readiness)  │
+  └──────────────────┘
 ```
 
 ## Project Structure
@@ -127,18 +142,11 @@ aso/
 │   ├── generate-icon.py      # AI icon generation
 │   ├── guidelines_checklist.json  # 100+ Apple review rules
 │   ├── cmd/                  # Subcommands
-│   │   ├── init.sh
-│   │   ├── status.sh
-│   │   ├── research.sh
-│   │   ├── metadata.sh
-│   │   ├── push.sh
-│   │   ├── pull.sh
-│   │   ├── check.sh
-│   │   ├── export.sh
-│   │   ├── screenshots_capture.sh
-│   │   ├── screenshots_compose.sh
-│   │   ├── screenshots_upload.sh
-│   │   └── icons_generate.sh
+│   │   ├── init.sh, status.sh, research.sh
+│   │   ├── metadata.sh, push.sh, pull.sh, export.sh
+│   │   ├── check.sh, score.sh, privacy_manifest.sh
+│   │   ├── translate.sh, competitor.sh, whats_new.sh
+│   │   ├── screenshots_*.sh, icons_generate.sh
 │   └── lib/                  # Shared utilities
 │       ├── common.sh
 │       └── config.sh

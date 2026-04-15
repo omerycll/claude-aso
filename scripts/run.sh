@@ -20,7 +20,12 @@
 #   screenshots compose     Generate marketing images (Gemini AI)
 #   screenshots upload      Upload screenshots to ASC
 #   icons generate          AI icon generation (Gemini/Imagen)
+#   translate               AI-translate metadata to other locales
+#   competitor              Competitor keyword analysis
+#   whats-new               Generate "What's New" from git history
+#   score                   ASO readiness score
 #   check                   Apple Review Guidelines compliance check
+#   privacy-manifest        Generate PrivacyInfo.xcprivacy
 #   help                    Show this help
 #
 # Setup:
@@ -103,6 +108,26 @@ route() {
         *)        echo "Usage: bash aso/run.sh icons generate [options]"; exit 1 ;;
       esac
       ;;
+    translate)
+      shift_args 1
+      source "$SCRIPTS_DIR/cmd/translate.sh" "$@"
+      ;;
+    whats-new)
+      shift_args 1
+      source "$SCRIPTS_DIR/cmd/whats_new.sh" "$@"
+      ;;
+    score)
+      shift_args 1
+      source "$SCRIPTS_DIR/cmd/score.sh" "$@"
+      ;;
+    competitor)
+      shift_args 1
+      source "$SCRIPTS_DIR/cmd/competitor.sh" "$@"
+      ;;
+    privacy-manifest)
+      shift_args 1
+      source "$SCRIPTS_DIR/cmd/privacy_manifest.sh" "$@"
+      ;;
     check)
       shift_args 1
       bash "$SCRIPTS_DIR/cmd/check.sh" "$@"
@@ -149,8 +174,15 @@ show_help() {
   Icons:
     icons generate [--preset name]   AI icon generation
 
+  AI Tools:
+    translate [--to tr,de,ja]    AI-translate metadata to other locales
+    competitor "App1" "App2"     Competitor keyword analysis
+    whats-new [--since v1.0]     Generate "What's New" from git history
+
   Compliance:
-    check [--section N] [--fail-only] [--json]   Apple guidelines check
+    check [--section N] [--json]      Apple guidelines check
+    privacy-manifest [--dry-run]      Generate PrivacyInfo.xcprivacy
+    score [--json]                    ASO readiness score
 
   Info:
     status                       Show current ASO status

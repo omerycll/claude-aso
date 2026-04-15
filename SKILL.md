@@ -38,7 +38,12 @@ Run commands with: `bash ${CLAUDE_SKILL_DIR}/scripts/run.sh <command>`
 | `screenshots compose` | Generate marketing images with AI (Gemini) |
 | `screenshots upload` | Upload screenshots to ASC with device detection & dedup |
 | `icons generate` | AI-powered icon generation (27+ preset styles) |
+| `translate` | AI-translate metadata to all configured locales |
+| `competitor` | Competitor keyword analysis with AI |
+| `whats-new` | Generate "What's New" release notes from git history |
+| `score` | ASO readiness score with recommendations |
 | `check` | Apple Review Guidelines compliance check (100+ rules) |
+| `privacy-manifest` | Auto-generate PrivacyInfo.xcprivacy from code scan |
 
 ## How to Use
 
@@ -140,6 +145,44 @@ bash ${CLAUDE_SKILL_DIR}/scripts/run.sh check --json
 
 **Sections:** 1=Safety, 2=Performance, 3=Business, 4=Design, 5=Legal, 6=Technical, 7=ASC, 8=Website
 
+### Step 7: Translate Metadata
+```bash
+# Translate from en-US to all configured locales
+bash ${CLAUDE_SKILL_DIR}/scripts/run.sh translate
+
+# Specific source and targets
+bash ${CLAUDE_SKILL_DIR}/scripts/run.sh translate --from en-US --to tr,de-DE,ja,ko
+```
+
+### Step 8: Competitor Analysis
+```bash
+# Analyze competitor keywords
+bash ${CLAUDE_SKILL_DIR}/scripts/run.sh competitor "Spotify" "Apple Music" --locale en-US
+```
+
+### Step 9: What's New
+```bash
+# Generate from git log
+bash ${CLAUDE_SKILL_DIR}/scripts/run.sh whats-new
+
+# Since specific tag, and push directly
+bash ${CLAUDE_SKILL_DIR}/scripts/run.sh whats-new --since v1.2.0 --push
+```
+
+### Step 10: ASO Score
+```bash
+bash ${CLAUDE_SKILL_DIR}/scripts/run.sh score
+```
+
+### Step 11: Privacy Manifest
+```bash
+# Preview what will be generated
+bash ${CLAUDE_SKILL_DIR}/scripts/run.sh privacy-manifest --dry-run
+
+# Generate and write
+bash ${CLAUDE_SKILL_DIR}/scripts/run.sh privacy-manifest
+```
+
 ## Argument Routing
 
 When the user invokes `/aso <command>`, route to the appropriate action:
@@ -154,7 +197,12 @@ When the user invokes `/aso <command>`, route to the appropriate action:
 - `/aso export [--json|--csv|--text]` → Export metadata
 - `/aso screenshots <capture|compose|upload>` → Screenshot workflow
 - `/aso icons generate [--preset X]` → Icon generation
+- `/aso translate [--from en-US] [--to tr,de,ja]` → AI translate metadata
+- `/aso competitor "App1" "App2" [--locale X]` → Competitor analysis
+- `/aso whats-new [--since v1.0] [--push]` → Generate release notes from git
+- `/aso score [--json]` → ASO readiness score
 - `/aso check [--section N] [--fail-only] [--json]` → Compliance check
+- `/aso privacy-manifest [--dry-run]` → Generate PrivacyInfo.xcprivacy
 
 If no argument is provided, show a helpful summary of available commands.
 
