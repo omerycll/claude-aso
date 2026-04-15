@@ -1,0 +1,10 @@
+.DS_Store
+*.tmp
+config.json
+data/
+icons/
+screenshots/output/
+screenshots/marketing/
+screenshots/preview/
+screenshots/inspirations/
+screenshots/overlay_text

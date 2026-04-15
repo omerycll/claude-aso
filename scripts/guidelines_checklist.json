@@ -1,0 +1,627 @@
+{
+  "_meta": {
+    "source": "https://developer.apple.com/app-store/review/guidelines/",
+    "last_updated": "2026-02-06",
+    "fetched": "2026-04-15"
+  },
+  "guidelines": [
+    {
+      "id": "1.1",
+      "section": "Safety",
+      "title": "Objectionable Content",
+      "check": "code_scan",
+      "patterns": ["nsfw","porn","gambling","violence","racist","sexist","homophobic","hate","gore","obscene"],
+      "scan_targets": ["swift"],
+      "severity": "fail",
+      "description": "Apps should not include content that is offensive, insensitive, upsetting, intended to disgust, in exceptionally poor taste, or just plain creepy."
+    },
+    {
+      "id": "1.1.1",
+      "section": "Safety",
+      "title": "Defamatory/Discriminatory Content",
+      "check": "code_scan",
+      "patterns": ["defamatory","discriminat","religion.*mock","race.*mock"],
+      "scan_targets": ["swift","strings","json"],
+      "severity": "fail",
+      "description": "Defamatory, discriminatory, or mean-spirited content, including references or commentary about religion, race, sexual orientation, gender, national/ethnic origin, or other targeted groups."
+    },
+    {
+      "id": "1.1.6",
+      "section": "Safety",
+      "title": "False Information",
+      "check": "manual",
+      "severity": "warn",
+      "description": "Apps that include false information, features, or misleading metadata will be rejected."
+    },
+    {
+      "id": "1.2",
+      "section": "Safety",
+      "title": "User Generated Content",
+      "check": "code_scan",
+      "patterns": ["UIImagePickerController","PHPickerViewController","user.*upload","post.*content","share.*photo","comment.*system"],
+      "scan_targets": ["swift"],
+      "severity": "warn",
+      "requires_if_found": ["content_filter","report_abuse","block_user"],
+      "description": "Apps with user-generated content must include: content filtering, mechanism for reporting, ability to block abusive users, contact info for reporting."
+    },
+    {
+      "id": "1.3",
+      "section": "Safety",
+      "title": "Kids Category",
+      "check": "metadata_check",
+      "severity": "warn",
+      "description": "Kids Category apps must not include third-party analytics, ads, or links out of the app."
+    },
+    {
+      "id": "1.5.1",
+      "section": "Safety",
+      "title": "Privacy - Location Services",
+      "check": "permission_check",
+      "framework": "CoreLocation",
+      "import_pattern": "import CoreLocation|CLLocationManager",
+      "plist_key": "NSLocationWhenInUseUsageDescription",
+      "severity": "fail",
+      "description": "Apps that use location services must provide a clear purpose string."
+    },
+    {
+      "id": "1.5.2",
+      "section": "Safety",
+      "title": "Privacy - Contacts",
+      "check": "permission_check",
+      "framework": "Contacts",
+      "import_pattern": "import Contacts|CNContactStore",
+      "plist_key": "NSContactsUsageDescription",
+      "severity": "fail",
+      "description": "Apps accessing contacts must declare usage."
+    },
+    {
+      "id": "1.5.3",
+      "section": "Safety",
+      "title": "Privacy - Camera",
+      "check": "permission_check",
+      "framework": "Camera",
+      "import_pattern": "AVCaptureSession|NSCameraUsageDescription|camera.*source",
+      "plist_key": "NSCameraUsageDescription",
+      "severity": "fail",
+      "description": "Apps using camera must provide usage description."
+    },
+    {
+      "id": "1.5.4",
+      "section": "Safety",
+      "title": "Privacy - Microphone",
+      "check": "permission_check",
+      "framework": "Microphone",
+      "import_pattern": "AVAudioRecorder|AVAudioSession.*record|NSMicrophoneUsageDescription",
+      "plist_key": "NSMicrophoneUsageDescription",
+      "severity": "fail",
+      "description": "Apps using microphone must provide usage description."
+    },
+    {
+      "id": "1.5.5",
+      "section": "Safety",
+      "title": "Privacy - Photos",
+      "check": "permission_check",
+      "framework": "Photos",
+      "import_pattern": "import Photos|PHPhotoLibrary|NSPhotoLibraryAddUsageDescription",
+      "plist_key": "NSPhotoLibraryAddUsageDescription",
+      "severity": "fail",
+      "description": "Apps accessing photo library must declare usage."
+    },
+    {
+      "id": "1.5.6",
+      "section": "Safety",
+      "title": "Privacy - HealthKit",
+      "check": "permission_check",
+      "framework": "HealthKit",
+      "import_pattern": "import HealthKit|HKHealthStore",
+      "plist_key": "NSHealthShareUsageDescription",
+      "severity": "fail",
+      "description": "HealthKit apps must not store health data in iCloud and must provide usage descriptions."
+    },
+    {
+      "id": "1.5.7",
+      "section": "Safety",
+      "title": "Privacy - Bluetooth",
+      "check": "permission_check",
+      "framework": "CoreBluetooth",
+      "import_pattern": "import CoreBluetooth|CBCentralManager",
+      "plist_key": "NSBluetoothAlwaysUsageDescription",
+      "severity": "fail",
+      "description": "Apps using Bluetooth must declare usage."
+    },
+    {
+      "id": "1.5.8",
+      "section": "Safety",
+      "title": "Privacy - HomeKit/SiriKit",
+      "check": "code_scan",
+      "patterns": ["import HomeKit","import Intents","HMHomeManager","INInteraction"],
+      "scan_targets": ["swift"],
+      "severity": "warn",
+      "description": "HomeKit data must not be used for advertising or data mining."
+    },
+    {
+      "id": "1.5.9",
+      "section": "Safety",
+      "title": "Privacy - App Tracking Transparency",
+      "check": "tracking_check",
+      "severity": "fail",
+      "description": "Apps must use ATTrackingManager.requestTrackingAuthorization before accessing IDFA."
+    },
+    {
+      "id": "1.5.10",
+      "section": "Safety",
+      "title": "Privacy Manifest",
+      "check": "file_exists",
+      "file": "PrivacyInfo.xcprivacy",
+      "severity": "fail",
+      "description": "Apps must include a privacy manifest declaring required reason APIs used."
+    },
+    {
+      "id": "1.5.11",
+      "section": "Safety",
+      "title": "Privacy - Data Collection",
+      "check": "manual",
+      "severity": "warn",
+      "description": "App Privacy nutrition label on App Store Connect must accurately reflect data collection practices."
+    },
+    {
+      "id": "1.6",
+      "section": "Safety",
+      "title": "Data Security",
+      "check": "code_scan",
+      "patterns": ["http://[^l][^o]"],
+      "scan_targets": ["swift"],
+      "severity": "warn",
+      "description": "Apps should use ATS (HTTPS). Insecure HTTP connections require justification."
+    },
+    {
+      "id": "2.1",
+      "section": "Performance",
+      "title": "App Completeness",
+      "check": "code_scan",
+      "patterns": ["TODO","FIXME","HACK","XXX","lorem ipsum","placeholder.*text","sample.*data"],
+      "scan_targets": ["swift"],
+      "severity": "warn",
+      "description": "App must be complete - no placeholder content, broken links, or unfinished features."
+    },
+    {
+      "id": "2.1.1",
+      "section": "Performance",
+      "title": "Debug/Test Code",
+      "check": "code_scan",
+      "patterns": ["UITEST_MODE","isTestFlight","isBeta","#if DEBUG.*print","NSLog.*debug"],
+      "scan_targets": ["swift"],
+      "severity": "warn",
+      "description": "Ensure debug/test code is properly guarded and not active in release builds."
+    },
+    {
+      "id": "2.2",
+      "section": "Performance",
+      "title": "Beta/Demo/Trial",
+      "check": "code_scan",
+      "patterns": ["beta","demo","trial","test.*version","pre.release"],
+      "scan_targets": ["swift"],
+      "scan_context": "string_literals_only",
+      "severity": "warn",
+      "description": "Apps that are beta, demo, trial, or test versions will be rejected."
+    },
+    {
+      "id": "2.3",
+      "section": "Performance",
+      "title": "Accurate Metadata",
+      "check": "asc_metadata",
+      "severity": "fail",
+      "description": "App description, screenshots, and previews must accurately reflect the app."
+    },
+    {
+      "id": "2.3.1",
+      "section": "Performance",
+      "title": "Hidden Features",
+      "check": "manual",
+      "severity": "fail",
+      "description": "Don't include hidden or undocumented features. App functionality should match description."
+    },
+    {
+      "id": "2.3.7",
+      "section": "Performance",
+      "title": "Accurate Screenshots",
+      "check": "asc_screenshots",
+      "severity": "fail",
+      "description": "Screenshots must show the app in use, not just marketing graphics."
+    },
+    {
+      "id": "2.4.1",
+      "section": "Performance",
+      "title": "Hardware Compatibility",
+      "check": "deployment_target",
+      "severity": "warn",
+      "description": "App should be compatible with declared hardware requirements."
+    },
+    {
+      "id": "2.5.1",
+      "section": "Performance",
+      "title": "IPv6 Compatibility",
+      "check": "code_scan",
+      "patterns": ["\\b\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\b"],
+      "scan_targets": ["swift"],
+      "severity": "fail",
+      "description": "Apps must support IPv6 networking. Hardcoded IPv4 addresses may cause rejection."
+    },
+    {
+      "id": "2.5.4",
+      "section": "Performance",
+      "title": "Multitasking Support",
+      "check": "manual",
+      "severity": "warn",
+      "description": "iPad apps must support multitasking (Slide Over, Split View)."
+    },
+    {
+      "id": "3.1",
+      "section": "Business",
+      "title": "In-App Purchase",
+      "check": "iap_check",
+      "severity": "fail",
+      "description": "Digital content, subscriptions, and unlockable features MUST use Apple IAP."
+    },
+    {
+      "id": "3.1.1",
+      "section": "Business",
+      "title": "External Payment Links",
+      "check": "code_scan",
+      "patterns": ["paypal","stripe\\.com","venmo","cashapp","gumroad","patreon\\.com","buy.*outside","external.*purchase"],
+      "scan_targets": ["swift"],
+      "severity": "fail",
+      "description": "Apps may not use external payment for digital goods/subscriptions (except entitlement linking in certain regions)."
+    },
+    {
+      "id": "3.1.2",
+      "section": "Business",
+      "title": "Subscription Requirements",
+      "check": "subscription_check",
+      "severity": "fail",
+      "description": "Auto-renewable subscriptions must: clearly display terms, have restore mechanism, explain subscription management."
+    },
+    {
+      "id": "3.1.3",
+      "section": "Business",
+      "title": "Restore Purchases",
+      "check": "code_scan",
+      "patterns": ["restorePurchases","AppStore\\.sync","Transaction\\.currentEntitlements","restore.*purchase"],
+      "scan_targets": ["swift"],
+      "severity": "fail",
+      "description": "Apps with IAP must include a mechanism to restore previously purchased content."
+    },
+    {
+      "id": "3.2",
+      "section": "Business",
+      "title": "Other Business Model Issues",
+      "check": "manual",
+      "severity": "warn",
+      "description": "Ensure business model is clear and doesn't mislead users."
+    },
+    {
+      "id": "4.0",
+      "section": "Design",
+      "title": "App Icon",
+      "check": "app_icon",
+      "severity": "fail",
+      "description": "App must include a 1024x1024 app icon."
+    },
+    {
+      "id": "4.1",
+      "section": "Design",
+      "title": "Copycats",
+      "check": "code_scan",
+      "patterns": ["nintendo","pokemon","disney","marvel","sony","microsoft","samsung","google.*logo","apple.*logo"],
+      "scan_targets": ["swift","json"],
+      "severity": "fail",
+      "description": "Don't copy other apps or use trademarked content."
+    },
+    {
+      "id": "4.2",
+      "section": "Design",
+      "title": "Minimum Functionality",
+      "check": "min_functionality",
+      "severity": "fail",
+      "description": "App must provide value beyond a simple website or marketing material."
+    },
+    {
+      "id": "4.2.3",
+      "section": "Design",
+      "title": "Not a Website Wrapper",
+      "check": "code_scan",
+      "patterns": ["WKWebView","UIWebView","SFSafariViewController","WebView"],
+      "scan_targets": ["swift"],
+      "severity": "warn",
+      "description": "App should not be a repackaged website."
+    },
+    {
+      "id": "4.5.4",
+      "section": "Design",
+      "title": "Sign in with Apple",
+      "check": "sign_in_apple",
+      "severity": "fail",
+      "description": "Apps using third-party login (Google, Facebook, etc.) MUST also offer Sign in with Apple."
+    },
+    {
+      "id": "4.7",
+      "section": "Design",
+      "title": "Third-Party Software",
+      "check": "manual",
+      "severity": "warn",
+      "description": "Third-party code/frameworks must comply with guidelines."
+    },
+    {
+      "id": "5.1",
+      "section": "Legal",
+      "title": "Privacy Policy",
+      "check": "privacy_policy",
+      "severity": "fail",
+      "description": "All apps must have a privacy policy. Apps with IAP or subscriptions especially."
+    },
+    {
+      "id": "5.1.1",
+      "section": "Legal",
+      "title": "Data Collection Disclosure",
+      "check": "manual",
+      "severity": "warn",
+      "description": "Apps must clearly describe what data is collected and how it's used."
+    },
+    {
+      "id": "5.1.2",
+      "section": "Legal",
+      "title": "Data Use and Sharing",
+      "check": "code_scan",
+      "patterns": ["firebase.*analytics","google.*analytics","facebook.*sdk","amplitude","mixpanel","segment\\.com","adjust\\.com","appsflyer"],
+      "scan_targets": ["swift","podfile","package"],
+      "severity": "warn",
+      "description": "Third-party analytics must be disclosed in privacy policy and App Privacy card."
+    },
+    {
+      "id": "5.2",
+      "section": "Legal",
+      "title": "Intellectual Property",
+      "check": "manual",
+      "severity": "warn",
+      "description": "Ensure all content (images, music, video) is properly licensed."
+    },
+    {
+      "id": "5.3",
+      "section": "Legal",
+      "title": "Gaming/Gambling",
+      "check": "code_scan",
+      "patterns": ["gambling","casino","slot.machine","lottery","betting","wager"],
+      "scan_targets": ["swift"],
+      "severity": "warn",
+      "description": "Gambling apps require geo-restrictions and appropriate licensing."
+    },
+    {
+      "id": "5.6",
+      "section": "Legal",
+      "title": "Developer Code of Conduct",
+      "check": "manual",
+      "severity": "warn",
+      "description": "Treat everyone with respect. Don't manipulate reviews or engage in fraudulent behavior."
+    },
+    {
+      "id": "T.1",
+      "section": "Technical",
+      "title": "Entitlements",
+      "check": "file_exists",
+      "file": "Aqua.entitlements",
+      "severity": "fail",
+      "description": "Entitlements file must exist and match app capabilities."
+    },
+    {
+      "id": "T.2",
+      "section": "Technical",
+      "title": "Info.plist",
+      "check": "file_exists",
+      "file": "Info.plist",
+      "severity": "fail",
+      "description": "Info.plist must exist with required keys."
+    },
+    {
+      "id": "T.3",
+      "section": "Technical",
+      "title": "Deprecated APIs",
+      "check": "code_scan",
+      "patterns": ["UIWebView","UIAlertView","UIActionSheet","ABAddressBook","UIPopoverController","UISearchDisplayController"],
+      "scan_targets": ["swift"],
+      "severity": "fail",
+      "description": "Deprecated APIs (UIWebView, UIAlertView, etc.) cause automatic rejection."
+    },
+    {
+      "id": "T.4",
+      "section": "Technical",
+      "title": "Third-Party Dependencies",
+      "check": "dependencies",
+      "severity": "warn",
+      "description": "Third-party SDKs must include privacy manifests and be up to date."
+    },
+    {
+      "id": "ASC.1",
+      "section": "App Store Connect",
+      "title": "Descriptions",
+      "check": "asc_descriptions",
+      "severity": "fail",
+      "description": "All configured locales must have descriptions (>50 chars) and keywords (>10 chars)."
+    },
+    {
+      "id": "ASC.2",
+      "section": "App Store Connect",
+      "title": "App Name & Subtitle",
+      "check": "asc_app_info",
+      "severity": "fail",
+      "description": "App name (<=30 chars) and subtitle (<=30 chars) must be set for all locales."
+    },
+    {
+      "id": "ASC.3",
+      "section": "App Store Connect",
+      "title": "Copyright",
+      "check": "asc_copyright",
+      "severity": "fail",
+      "description": "Copyright must be set on the app version."
+    },
+    {
+      "id": "ASC.4",
+      "section": "App Store Connect",
+      "title": "Screenshots",
+      "check": "asc_screenshots",
+      "severity": "fail",
+      "description": "Screenshots must be uploaded for all locales."
+    },
+    {
+      "id": "ASC.5",
+      "section": "App Store Connect",
+      "title": "Support URL",
+      "check": "url_reachable",
+      "url_key": "support",
+      "severity": "fail",
+      "description": "Support URL must be set and reachable."
+    },
+    {
+      "id": "ASC.6",
+      "section": "App Store Connect",
+      "title": "Privacy Policy URL",
+      "check": "url_reachable",
+      "url_key": "privacy",
+      "severity": "fail",
+      "description": "Privacy policy URL must be set and reachable."
+    },
+    {
+      "id": "ASC.7",
+      "section": "App Store Connect",
+      "title": "Marketing URL",
+      "check": "url_reachable",
+      "url_key": "marketing",
+      "severity": "warn",
+      "description": "Marketing URL should be set and reachable."
+    },
+    {
+      "id": "ASC.8",
+      "section": "App Store Connect",
+      "title": "Terms of Use in Description",
+      "check": "asc_desc_contains",
+      "contains": ["privacy","terms"],
+      "severity": "warn",
+      "description": "Descriptions should include links to privacy policy and terms of use."
+    },
+    {
+      "id": "WEB.1",
+      "section": "Website",
+      "title": "Privacy Policy Content",
+      "check": "web_content",
+      "url_key": "privacy",
+      "required_terms": ["privacy","data","collect","personal","information"],
+      "min_required": 3,
+      "severity": "fail",
+      "description": "Privacy policy page must contain actual privacy policy content (data collection, usage, retention)."
+    },
+    {
+      "id": "WEB.2",
+      "section": "Website",
+      "title": "Terms of Service Content",
+      "check": "web_content",
+      "url_key": "terms",
+      "required_terms": ["terms","service","agreement","use","accept"],
+      "min_required": 3,
+      "severity": "fail",
+      "description": "Terms page must contain actual terms of service content."
+    },
+    {
+      "id": "WEB.3",
+      "section": "Website",
+      "title": "Subscription Terms (iTunes/Apple)",
+      "check": "web_content",
+      "url_key": "terms",
+      "required_terms": ["iTunes","payment","charged","purchase","Account"],
+      "min_required": 3,
+      "severity": "fail",
+      "description": "Terms must state: Payment charged to iTunes Account upon confirmation of purchase."
+    },
+    {
+      "id": "WEB.4",
+      "section": "Website",
+      "title": "Auto-Renewal Terms",
+      "check": "web_content",
+      "url_key": "terms",
+      "required_terms": ["auto-renew","renew","24 hours","current period","automatically"],
+      "min_required": 3,
+      "severity": "fail",
+      "description": "Terms must state: Subscription auto-renews unless turned off 24 hours before end of current period."
+    },
+    {
+      "id": "WEB.5",
+      "section": "Website",
+      "title": "Subscription Management",
+      "check": "web_content",
+      "url_key": "terms",
+      "required_terms": ["manage","subscription","Account Settings","auto-renewal","turned off"],
+      "min_required": 3,
+      "severity": "fail",
+      "description": "Terms must explain how to manage subscriptions via Account Settings."
+    },
+    {
+      "id": "WEB.6",
+      "section": "Website",
+      "title": "Cancellation Policy",
+      "check": "web_content",
+      "url_key": "terms",
+      "required_terms": ["cancel","active","subscription","period","not permitted"],
+      "min_required": 2,
+      "severity": "fail",
+      "description": "Terms must state cancellation policy for active subscription period."
+    },
+    {
+      "id": "WEB.7",
+      "section": "Website",
+      "title": "Free Trial Terms",
+      "check": "web_content",
+      "url_key": "terms",
+      "required_terms": ["free trial","forfeited","unused portion","trial period"],
+      "min_required": 2,
+      "severity": "warn",
+      "description": "If free trial offered, terms must state unused portion is forfeited upon purchase."
+    },
+    {
+      "id": "WEB.8",
+      "section": "Website",
+      "title": "Contact Email",
+      "check": "web_content",
+      "url_key": "support",
+      "required_terms": ["@","email","contact","mail"],
+      "min_required": 2,
+      "severity": "fail",
+      "description": "Contact page must display a working email address."
+    },
+    {
+      "id": "WEB.9",
+      "section": "Website",
+      "title": "Privacy - Data Collection Details",
+      "check": "web_content",
+      "url_key": "privacy",
+      "required_terms": ["collect","usage data","device","retain","delete"],
+      "min_required": 3,
+      "severity": "warn",
+      "description": "Privacy policy should detail what data is collected, how it's used, and retention policy."
+    },
+    {
+      "id": "WEB.10",
+      "section": "Website",
+      "title": "Privacy - Contact Info",
+      "check": "web_content",
+      "url_key": "privacy",
+      "required_terms": ["@","contact","email","question"],
+      "min_required": 2,
+      "severity": "warn",
+      "description": "Privacy policy should include contact information for privacy inquiries."
+    }
+  ],
+  "urls": {
+    "privacy": "https://aqua.appdiyorki.com/privacy",
+    "terms": "https://aqua.appdiyorki.com/terms",
+    "support": "https://aqua.appdiyorki.com/contact",
+    "marketing": "https://www.instagram.com/appdiyorki"
+  }
+}
