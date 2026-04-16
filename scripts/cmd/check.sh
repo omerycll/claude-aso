@@ -71,13 +71,13 @@ _asc_app_info = None
 def read_files(extensions):
     results = []
     for ext in extensions:
-        if ext == "swift": pattern = os.path.join(APP_DIR, "*.swift")
-        elif ext == "strings": pattern = os.path.join(APP_DIR, "*.xcstrings")
-        elif ext == "json": pattern = os.path.join(APP_DIR, "*.json")
+        if ext == "swift": pattern = os.path.join(APP_DIR, "**", "*.swift")
+        elif ext == "strings": pattern = os.path.join(APP_DIR, "**", "*.xcstrings")
+        elif ext == "json": pattern = os.path.join(APP_DIR, "**", "*.json")
         elif ext == "podfile": pattern = os.path.join(PROJECT_ROOT, "Podfile")
         elif ext == "package": pattern = os.path.join(PROJECT_ROOT, "Package.swift")
-        else: pattern = os.path.join(APP_DIR, f"*.{ext}")
-        for fp in glob.glob(pattern):
+        else: pattern = os.path.join(APP_DIR, "**", f"*.{ext}")
+        for fp in glob.glob(pattern, recursive=True):
             if fp not in _file_cache:
                 try:
                     with open(fp) as f: _file_cache[fp] = f.read()
@@ -100,27 +100,31 @@ def run_asc(args):
         return r.stdout
     except: return None
 
-def fetch_web_content(base_url):
-    domain = base_url.split("//")[1].split("/")[0] if "//" in base_url else base_url
-    if domain in _web_content_cache: return _web_content_cache[domain]
+def fetch_web_content(url):
+    # Cache per full URL (not domain) so privacy/terms/contact are fetched separately.
+    if url in _web_content_cache: return _web_content_cache[url]
     try:
-        r = subprocess.run(["curl","-sL","--max-time","15",f"https://{domain}/"], capture_output=True, text=True, timeout=20)
-        html = r.stdout
+        # Fetch the actual target URL (privacy, terms, etc.) — not just the domain root.
+        r = subprocess.run(["curl","-sL","--max-time","15","-A","Mozilla/5.0",url], capture_output=True, text=True, timeout=20)
+        html = r.stdout or ""
+        all_content = html  # Start with HTML so SSR/server-rendered pages are covered.
+
+        # For SPAs the content may live in JS bundles — scan them too.
+        domain = url.split("//")[1].split("/")[0] if "//" in url else url
         js_urls = re.findall(r'src="(/assets/[^"]+\.js)"', html)
         if not js_urls: js_urls = re.findall(r'src="([^"]+\.js)"', html)
-        all_content = ""
-        for js_path in js_urls:
+        for js_path in js_urls[:5]:  # cap to avoid pulling every chunk
             if js_path.startswith("/"): js_url = f"https://{domain}{js_path}"
             elif js_path.startswith("http"): js_url = js_path
             else: js_url = f"https://{domain}/{js_path}"
             try:
-                jr = subprocess.run(["curl","-sL","--max-time","20",js_url], capture_output=True, text=True, timeout=25)
-                all_content += jr.stdout
+                jr = subprocess.run(["curl","-sL","--max-time","20","-A","Mozilla/5.0",js_url], capture_output=True, text=True, timeout=25)
+                all_content += "\n" + (jr.stdout or "")
             except: pass
-        _web_content_cache[domain] = all_content
+        _web_content_cache[url] = all_content
         return all_content
     except:
-        _web_content_cache[domain] = ""
+        _web_content_cache[url] = ""
         return ""
 
 def get_version_localizations():
@@ -189,6 +193,15 @@ def check_file_exists(g):
         return ("ok",f"{fn} with API declarations") if "NSPrivacyAccessedAPITypes" in content else ("incomplete",f"{fn} missing API declarations")
     return "ok", f"{fn} exists"
 
+def check_entitlements_exists():
+    # Resolve entitlements path from config (app.entitlements) instead of hardcoding a filename.
+    if not ENTITLEMENTS:
+        return "warn", "No entitlements path configured (app.entitlements)"
+    fn = os.path.basename(ENTITLEMENTS)
+    if not os.path.exists(ENTITLEMENTS):
+        return "missing", f"{fn} not found at configured path"
+    return "ok", f"{fn} exists"
+
 def check_iap():
     files = read_files(["swift"])
     has = any(re.search(r"import StoreKit|Product\.|Transaction\.", c) for _,c in files)
@@ -218,7 +231,7 @@ def check_app_icon():
     return "warn", f"{len(pngs)} icon PNGs, verify 1024x1024"
 
 def check_min_functionality():
-    count = len(glob.glob(os.path.join(APP_DIR, "*.swift")))
+    count = len(glob.glob(os.path.join(APP_DIR, "**", "*.swift"), recursive=True))
     if count >= 10: return "ok", f"{count} Swift files"
     if count >= 5: return "warn", f"Only {count} Swift files"
     return "insufficient", f"Only {count} Swift files"
@@ -343,6 +356,9 @@ def run_check(g):
     elif t == "file_exists":
         s, d = check_file_exists(g)
         return ("pass",d) if s=="ok" else ("warn",d) if s=="incomplete" else ("fail",d)
+    elif t == "entitlements_exists":
+        s, d = check_entitlements_exists()
+        return ("pass",d) if s=="ok" else ("warn",d) if s=="warn" else ("fail",d)
     elif t == "iap_check":
         return "pass", check_iap()[1]
     elif t == "subscription_check":

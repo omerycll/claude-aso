@@ -407,8 +407,7 @@
       "id": "T.1",
       "section": "Technical",
       "title": "Entitlements",
-      "check": "file_exists",
-      "file": "Aqua.entitlements",
+      "check": "entitlements_exists",
       "severity": "fail",
       "description": "Entitlements file must exist and match app capabilities."
     },
