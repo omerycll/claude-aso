@@ -277,10 +277,8 @@ def check_dependencies():
 def check_web_content(g):
     url = URLS.get(g.get("url_key",""),"")
     if not url: return "missing", f"No {g.get('url_key','')} URL"
-    domain = url.split("//")[1].split("/")[0] if "//" in url else ""
-    if not domain: return "missing", f"Invalid URL"
-    content = fetch_web_content(domain)
-    if not content: return "unreachable", f"No content from {domain}"
+    content = fetch_web_content(url)
+    if not content: return "unreachable", f"No content from {url}"
     required = g.get("required_terms",[])
     min_req = g.get("min_required",1)
     found = [t for t in required if re.search(re.escape(t), content, re.IGNORECASE)]
