@@ -13,13 +13,13 @@ Keyword research, metadata generation, screenshot capture, AI icon generation, A
 ## Quick Install
 
 ```bash
-git clone https://github.com/ASOToolkit/aso.git ~/.claude/skills/aso
+git clone https://github.com/omerycll/claude-aso.git ~/.claude/skills/aso
 ```
 
 Or with the installer:
 
 ```bash
-git clone https://github.com/ASOToolkit/aso.git /tmp/aso && bash /tmp/aso/install-skill.sh
+git clone https://github.com/omerycll/claude-aso.git /tmp/aso && bash /tmp/aso/install-skill.sh
 ```
 
 Then restart Claude Code.
