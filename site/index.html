@@ -1,0 +1,686 @@
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ASO Toolkit — Ship iOS apps from Claude Code</title>
+  <meta name="description" content="App Store Optimization for iOS/macOS as a Claude Code Skill. Keyword research, metadata, screenshots, AI icons, Apple Review Guidelines compliance, App Store Connect sync — all from your terminal." />
+  <meta name="color-scheme" content="light dark" />
+
+  <meta property="og:title" content="ASO Toolkit — App Store Optimization as a Claude Code Skill" />
+  <meta property="og:description" content="Research keywords, generate metadata, capture screenshots, generate AI icons, check Apple Review Guidelines, sync with App Store Connect — all from Claude Code." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://github.com/omerycll/claude-aso" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg: #ffffff;
+      --bg-soft: #fafafa;
+      --fg: #18181b;
+      --fg-muted: #52525b;
+      --fg-dim: #71717a;
+      --border: #e4e4e7;
+      --border-strong: #d4d4d8;
+      --accent: #18181b;
+      --accent-fg: #ffffff;
+      --code-bg: #f4f4f5;
+      --code-fg: #27272a;
+      --ring: #18181b;
+      --warn: #f59e0b;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #09090b;
+        --bg-soft: rgba(24,24,27,0.4);
+        --fg: #f4f4f5;
+        --fg-muted: #a1a1aa;
+        --fg-dim: #71717a;
+        --border: #27272a;
+        --border-strong: #3f3f46;
+        --accent: #f4f4f5;
+        --accent-fg: #09090b;
+        --code-bg: #18181b;
+        --code-fg: #e4e4e7;
+        --ring: #f4f4f5;
+      }
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      color: var(--fg);
+      background: var(--bg);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    h1, h2, h3, h4 {
+      font-family: 'Inter Tight', 'Inter', ui-sans-serif, system-ui, sans-serif;
+      font-weight: 700;
+      letter-spacing: -0.015em;
+      margin: 0;
+    }
+    p { margin: 0; color: var(--fg-muted); }
+    a { color: inherit; text-decoration: none; }
+    code, pre, .mono { font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace; }
+
+    .container { max-width: 1152px; margin: 0 auto; padding: 0 24px; }
+    .container-wide { max-width: 1280px; margin: 0 auto; padding: 0 24px; }
+
+    /* Top nav */
+    header.nav {
+      position: sticky; top: 0; z-index: 50;
+      backdrop-filter: saturate(180%) blur(12px);
+      -webkit-backdrop-filter: saturate(180%) blur(12px);
+      background: color-mix(in oklab, var(--bg) 85%, transparent);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      display: flex; align-items: center; justify-content: space-between;
+      height: 60px;
+    }
+    .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; letter-spacing: -0.01em; }
+    .brand-mark {
+      width: 28px; height: 28px; border-radius: 8px;
+      background: var(--fg); color: var(--bg);
+      display: grid; place-items: center; font-family: 'JetBrains Mono', monospace;
+      font-size: 13px; font-weight: 700;
+    }
+    .nav-links { display: none; gap: 28px; font-size: 14px; color: var(--fg-muted); }
+    .nav-links a:hover { color: var(--fg); }
+    @media (min-width: 768px) { .nav-links { display: flex; } }
+    .nav-cta { display: flex; align-items: center; gap: 10px; }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      height: 40px; padding: 0 16px; border-radius: 10px;
+      font-size: 14px; font-weight: 500;
+      border: 1px solid transparent;
+      transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+      cursor: pointer; user-select: none;
+    }
+    .btn-primary { background: var(--accent); color: var(--accent-fg); }
+    .btn-primary:hover { filter: brightness(0.9); }
+    .btn-ghost { border-color: var(--border-strong); color: var(--fg); }
+    .btn-ghost:hover { background: var(--bg-soft); }
+    .btn-sm { height: 32px; padding: 0 12px; font-size: 13px; border-radius: 8px; }
+
+    /* Hero */
+    .hero { padding: 96px 0 72px; position: relative; overflow: hidden; }
+    .hero::before {
+      content: ""; position: absolute; inset: -1px -1px auto -1px; height: 40%;
+      background: linear-gradient(to bottom, color-mix(in oklab, var(--fg) 5%, transparent), transparent);
+      z-index: -1;
+    }
+    .pill {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 4px 12px; border: 1px solid var(--border); border-radius: 999px;
+      font-size: 12px; color: var(--fg-muted); background: var(--bg-soft);
+    }
+    .pill-dot { width: 6px; height: 6px; border-radius: 999px; background: #22c55e; box-shadow: 0 0 0 3px color-mix(in oklab, #22c55e 25%, transparent); }
+    .hero h1 {
+      font-size: clamp(36px, 6vw, 60px);
+      line-height: 1.05;
+      margin-top: 20px;
+    }
+    .hero-sub {
+      margin-top: 18px; font-size: 18px; max-width: 640px;
+    }
+    .hero-ctas { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+    .install-tabs {
+      margin-top: 28px; border: 1px solid var(--border); border-radius: 14px; overflow: hidden;
+      max-width: 720px; background: var(--bg);
+    }
+    .install-tab-row {
+      display: flex; gap: 0; border-bottom: 1px solid var(--border);
+      background: var(--bg-soft);
+    }
+    .install-tab {
+      padding: 10px 16px; font-size: 13px; color: var(--fg-muted);
+      border: none; background: transparent; cursor: pointer;
+      font-family: inherit;
+    }
+    .install-tab[aria-selected="true"] { color: var(--fg); background: var(--bg); box-shadow: inset 0 -2px 0 var(--fg); }
+    .install-body { padding: 18px 20px; }
+    .install-body pre {
+      margin: 0; font-size: 14px; color: var(--code-fg);
+      white-space: pre-wrap; word-break: break-all;
+    }
+    .install-body .muted { color: var(--fg-dim); }
+
+    .stats {
+      margin-top: 56px;
+      display: grid; gap: 16px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    @media (min-width: 768px) { .stats { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+    .stat {
+      padding: 18px 20px; border: 1px solid var(--border); border-radius: 14px;
+      background: var(--bg);
+    }
+    .stat-n { font-family: 'Inter Tight', sans-serif; font-size: 28px; font-weight: 700; letter-spacing: -0.02em; }
+    .stat-l { font-size: 13px; color: var(--fg-muted); margin-top: 2px; }
+
+    /* Sections */
+    section { padding: 80px 0; border-top: 1px solid var(--border); }
+    section.first { border-top: none; }
+    .section-head { max-width: 720px; margin: 0 auto 48px; text-align: center; }
+    .eyebrow {
+      display: inline-block; font-size: 12px; text-transform: uppercase;
+      letter-spacing: 0.12em; color: var(--fg-dim); font-weight: 600;
+    }
+    .section-head h2 { font-size: clamp(28px, 4vw, 40px); line-height: 1.15; margin-top: 10px; }
+    .section-head p { margin-top: 14px; font-size: 17px; }
+
+    /* Feature cards */
+    .grid { display: grid; gap: 16px; grid-template-columns: 1fr; }
+    @media (min-width: 640px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (min-width: 1024px) { .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+    .card {
+      border: 1px solid var(--border); border-radius: 14px; padding: 22px;
+      background: var(--bg); display: flex; flex-direction: column; gap: 12px;
+      transition: border-color 0.15s ease, transform 0.15s ease;
+    }
+    .card:hover { border-color: var(--border-strong); }
+    .card-title { font-size: 16px; font-weight: 600; color: var(--fg); }
+    .card p { font-size: 14.5px; }
+    .card code {
+      display: block; padding: 10px 12px; border-radius: 8px;
+      background: var(--code-bg); color: var(--code-fg);
+      font-size: 12.5px; margin-top: auto;
+      overflow-x: auto;
+    }
+    .card ul { margin: 0; padding-left: 18px; color: var(--fg-muted); font-size: 14px; }
+    .card ul li { margin: 2px 0; }
+
+    /* Commands table */
+    .cmd-table {
+      width: 100%; border-collapse: collapse; font-size: 14px;
+      border: 1px solid var(--border); border-radius: 14px; overflow: hidden;
+    }
+    .cmd-table th, .cmd-table td { padding: 14px 18px; text-align: left; border-bottom: 1px solid var(--border); }
+    .cmd-table tr:last-child td { border-bottom: none; }
+    .cmd-table th { font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--fg-dim); background: var(--bg-soft); }
+    .cmd-table code { font-size: 13px; background: var(--code-bg); color: var(--code-fg); padding: 2px 8px; border-radius: 6px; }
+
+    /* Terminal demo */
+    .terminal {
+      border: 1px solid var(--border); border-radius: 14px; overflow: hidden;
+      background: var(--bg);
+    }
+    .terminal-head {
+      display: flex; align-items: center; gap: 8px;
+      padding: 10px 14px; border-bottom: 1px solid var(--border);
+      background: var(--bg-soft);
+    }
+    .term-dot { width: 12px; height: 12px; border-radius: 999px; background: var(--border-strong); }
+    .term-label { margin-left: auto; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--fg-dim); }
+    .terminal pre {
+      margin: 0; padding: 20px; font-size: 13.5px; line-height: 1.55;
+      color: var(--code-fg); overflow-x: auto;
+    }
+    .tok-green { color: #16a34a; }
+    .tok-red { color: #dc2626; }
+    .tok-amber { color: #d97706; }
+    .tok-blue { color: #2563eb; }
+    .tok-dim { color: var(--fg-dim); }
+    @media (prefers-color-scheme: dark) {
+      .tok-green { color: #4ade80; }
+      .tok-red { color: #f87171; }
+      .tok-amber { color: #fbbf24; }
+      .tok-blue { color: #60a5fa; }
+    }
+
+    /* FAQ */
+    details.faq {
+      border: 1px solid var(--border); border-radius: 14px;
+      padding: 18px 22px; background: var(--bg);
+    }
+    details.faq + details.faq { margin-top: 12px; }
+    details.faq summary {
+      cursor: pointer; list-style: none;
+      font-weight: 600; font-size: 16px; color: var(--fg);
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    }
+    details.faq summary::-webkit-details-marker { display: none; }
+    details.faq summary::after {
+      content: "+"; font-weight: 400; color: var(--fg-dim); transition: transform 0.2s ease;
+      font-size: 20px; line-height: 1;
+    }
+    details.faq[open] summary::after { transform: rotate(45deg); }
+    details.faq div.faq-body { margin-top: 12px; color: var(--fg-muted); font-size: 15px; }
+    details.faq code { background: var(--code-bg); padding: 2px 6px; border-radius: 4px; font-size: 13px; }
+
+    /* Callout */
+    .cta {
+      border: 1px solid var(--border); border-radius: 18px; padding: 48px 32px;
+      text-align: center; background: var(--bg-soft);
+    }
+    .cta h3 { font-size: clamp(22px, 3vw, 28px); }
+    .cta-actions { margin-top: 24px; display: inline-flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border); padding: 40px 0 64px;
+      color: var(--fg-dim); font-size: 14px;
+    }
+    .foot {
+      display: flex; flex-wrap: wrap; gap: 16px; justify-content: space-between; align-items: center;
+    }
+    footer a:hover { color: var(--fg); }
+    .foot-links { display: flex; gap: 20px; flex-wrap: wrap; }
+    .disclaimer { max-width: 720px; margin-top: 16px; font-size: 12.5px; color: var(--fg-dim); }
+
+    /* Icon */
+    .icon { width: 16px; height: 16px; flex: none; }
+  </style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="container nav-inner">
+    <a href="#" class="brand">
+      <span class="brand-mark">A</span>
+      <span>ASO Toolkit</span>
+    </a>
+    <nav class="nav-links" aria-label="Primary">
+      <a href="#features">Features</a>
+      <a href="#commands">Commands</a>
+      <a href="#demo">Demo</a>
+      <a href="#install">Install</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <div class="nav-cta">
+      <a class="btn btn-ghost btn-sm" href="https://github.com/omerycll/claude-aso" target="_blank" rel="noopener">
+        <svg class="icon" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+        GitHub
+      </a>
+      <a class="btn btn-primary btn-sm" href="#install">Install</a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- HERO -->
+  <section class="hero first">
+    <div class="container">
+      <span class="pill"><span class="pill-dot"></span> v1 · Claude Code Skill</span>
+      <h1>Ship iOS apps from Claude&nbsp;Code.</h1>
+      <p class="hero-sub">
+        ASO Toolkit turns Claude Code into your App Store operator. Research keywords,
+        generate metadata, capture screenshots, produce AI icons, audit Apple Review
+        Guidelines, and sync with App Store Connect — all with slash commands.
+      </p>
+
+      <div class="hero-ctas">
+        <a class="btn btn-primary" href="#install">Install the skill</a>
+        <a class="btn btn-ghost" href="#demo">See it run
+          <svg class="icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 10h10M11 6l4 4-4 4"/></svg>
+        </a>
+      </div>
+
+      <!-- Install tabs -->
+      <div class="install-tabs" id="install" role="tablist" aria-label="Install options">
+        <div class="install-tab-row">
+          <button class="install-tab" role="tab" aria-selected="true" data-target="tab-clone">git clone</button>
+          <button class="install-tab" role="tab" aria-selected="false" data-target="tab-installer">installer</button>
+          <button class="install-tab" role="tab" aria-selected="false" data-target="tab-use">first run</button>
+        </div>
+        <div class="install-body" id="tab-clone" role="tabpanel">
+<pre><span class="tok-dim"># Clones the skill into your Claude Code skills directory</span>
+git clone https://github.com/omerycll/claude-aso.git ~/.claude/skills/aso</pre>
+        </div>
+        <div class="install-body" id="tab-installer" role="tabpanel" hidden>
+<pre><span class="tok-dim"># Clone and run the installer</span>
+git clone https://github.com/omerycll/claude-aso.git /tmp/aso \
+  &amp;&amp; bash /tmp/aso/install-skill.sh</pre>
+        </div>
+        <div class="install-body" id="tab-use" role="tabpanel" hidden>
+<pre><span class="tok-dim"># Restart Claude Code, then inside your Xcode project:</span>
+/aso init
+/aso check</pre>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats" aria-label="At a glance">
+        <div class="stat"><div class="stat-n">17</div><div class="stat-l">Slash commands</div></div>
+        <div class="stat"><div class="stat-n">100+</div><div class="stat-l">Guideline checks</div></div>
+        <div class="stat"><div class="stat-n">AI</div><div class="stat-l">Icons &amp; translations</div></div>
+        <div class="stat"><div class="stat-n">0</div><div class="stat-l">External services stored</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section id="features">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Features</span>
+        <h2>Everything you need to launch on the App Store</h2>
+        <p>One Claude Code skill covers the whole ASO loop — from a cold Xcode project to a reviewed, localized, screenshotted release.</p>
+      </div>
+
+      <div class="grid">
+        <div class="card">
+          <div class="card-title">Keyword research</div>
+          <p>Guided research per locale. Gaps, synonyms, and character-limit-aware suggestions.</p>
+          <code>/aso research</code>
+        </div>
+        <div class="card">
+          <div class="card-title">Metadata generation</div>
+          <p>Generate title, subtitle, keywords, and descriptions that stay within App Store limits.</p>
+          <code>/aso metadata</code>
+        </div>
+        <div class="card">
+          <div class="card-title">App Store Connect sync</div>
+          <p>Push and pull metadata between your repo and ASC without leaving the terminal.</p>
+          <code>/aso push · /aso pull</code>
+        </div>
+        <div class="card">
+          <div class="card-title">Screenshot pipeline</div>
+          <p>Capture from the simulator, compose marketing frames with AI, upload to ASC.</p>
+          <code>/aso screenshots capture · compose · upload</code>
+        </div>
+        <div class="card">
+          <div class="card-title">AI icon generation</div>
+          <p>27+ presets — flat, clay, gradient, glossy, neubrutalist, 3d-mascot — powered by Gemini.</p>
+          <code>/aso icons generate --preset modern-blob</code>
+        </div>
+        <div class="card">
+          <div class="card-title">Translate to all locales</div>
+          <p>One command, every supported locale. Keywords and descriptions that actually fit.</p>
+          <code>/aso translate</code>
+        </div>
+        <div class="card">
+          <div class="card-title">Competitor analysis</div>
+          <p>AI-assisted keyword gap analysis against the apps in your category.</p>
+          <code>/aso competitor</code>
+        </div>
+        <div class="card">
+          <div class="card-title">Release notes from git</div>
+          <p>Generate App Store "What's New" copy directly from your commit history.</p>
+          <code>/aso whats-new</code>
+        </div>
+        <div class="card">
+          <div class="card-title">ASO readiness score</div>
+          <p>0–100 score with concrete recommendations across metadata, visuals, and legal.</p>
+          <code>/aso score</code>
+        </div>
+        <div class="card">
+          <div class="card-title">Apple Review Guidelines check</div>
+          <p>100+ checks across Safety, Performance, Business, Design, Legal, Technical, ASC, and Website.</p>
+          <code>/aso check</code>
+        </div>
+        <div class="card">
+          <div class="card-title">Privacy manifest</div>
+          <p>Auto-scan your code for required reason APIs and emit a matching PrivacyInfo.xcprivacy.</p>
+          <code>/aso privacy-manifest</code>
+        </div>
+        <div class="card">
+          <div class="card-title">Zero-config init</div>
+          <p>Autodetects your Xcode project, team, bundle id, version, and ASC locales in one command.</p>
+          <code>/aso init</code>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COMMANDS -->
+  <section id="commands">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Reference</span>
+        <h2>Every command at a glance</h2>
+        <p>Each subcommand is a dedicated script. Run them directly, or ask Claude Code to orchestrate them.</p>
+      </div>
+
+      <div style="overflow-x:auto;">
+        <table class="cmd-table">
+          <thead>
+            <tr><th>Command</th><th>What it does</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>/aso init</code></td><td>Autodetect Xcode project, connect to App Store Connect, generate config</td></tr>
+            <tr><td><code>/aso status</code></td><td>Show app info, ASC connection, data inventory</td></tr>
+            <tr><td><code>/aso research</code></td><td>Guided keyword research for each locale</td></tr>
+            <tr><td><code>/aso metadata</code></td><td>Generate metadata with character-limit validation</td></tr>
+            <tr><td><code>/aso push</code> / <code>/aso pull</code></td><td>Sync metadata with App Store Connect</td></tr>
+            <tr><td><code>/aso export</code></td><td>Export metadata as JSON, CSV, or text</td></tr>
+            <tr><td><code>/aso screenshots capture</code></td><td>Capture screenshots via iOS Simulator</td></tr>
+            <tr><td><code>/aso screenshots compose</code></td><td>Generate marketing frames with Gemini AI</td></tr>
+            <tr><td><code>/aso screenshots upload</code></td><td>Upload screenshots to App Store Connect</td></tr>
+            <tr><td><code>/aso icons generate</code></td><td>AI icon generation (multiple preset styles)</td></tr>
+            <tr><td><code>/aso translate</code></td><td>AI-translate metadata to all configured locales</td></tr>
+            <tr><td><code>/aso competitor</code></td><td>Competitor keyword analysis</td></tr>
+            <tr><td><code>/aso whats-new</code></td><td>Generate "What's New" from git history</td></tr>
+            <tr><td><code>/aso score</code></td><td>ASO readiness score with recommendations</td></tr>
+            <tr><td><code>/aso check</code></td><td>Apple Review Guidelines compliance (100+ checks)</td></tr>
+            <tr><td><code>/aso privacy-manifest</code></td><td>Auto-generate PrivacyInfo.xcprivacy</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- DEMO -->
+  <section id="demo">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Demo</span>
+        <h2>What it looks like in your terminal</h2>
+        <p>Actual output. Exit codes are real. No "demo mode."</p>
+      </div>
+
+      <div class="terminal" aria-label="Terminal output">
+        <div class="terminal-head">
+          <span class="term-dot"></span><span class="term-dot"></span><span class="term-dot"></span>
+          <span class="term-label">~/MyApp · /aso check</span>
+        </div>
+<pre>  <span class="tok-dim">Apple App Store Review Guidelines — MyApp</span>
+  <span class="tok-dim">Source: developer.apple.com · Checks: 68</span>
+
+  <span class="tok-blue">═══ 1. SAFETY ══════════════════════════════════════════════</span>
+    <span class="tok-green">✓</span> [1.1]   No objectionable content
+    <span class="tok-green">✓</span> [1.5.9] ATT implemented
+    <span class="tok-green">✓</span> [1.5.10] PrivacyInfo.xcprivacy with API declarations
+
+  <span class="tok-blue">═══ 3. BUSINESS ════════════════════════════════════════════</span>
+    <span class="tok-green">✓</span> [3.1.2] Subscriptions properly implemented
+    <span class="tok-green">✓</span> [3.1.3] Restore mechanism found
+
+  <span class="tok-blue">═══ 4. DESIGN ══════════════════════════════════════════════</span>
+    <span class="tok-green">✓</span> [4.0]   1024x1024 app icon found
+    <span class="tok-green">✓</span> [4.2]   185 Swift files
+    <span class="tok-green">✓</span> [4.5.4] Sign in with Apple implemented
+
+  <span class="tok-blue">═══ 5. LEGAL ═══════════════════════════════════════════════</span>
+    <span class="tok-green">✓</span> [5.1]   Privacy policy reachable
+
+  <span class="tok-blue">═══ 8. WEBSITE ═════════════════════════════════════════════</span>
+    <span class="tok-green">✓</span> [WEB.1] privacy, data, collect, personal, information
+    <span class="tok-green">✓</span> [WEB.3] iTunes, payment, charged, purchase, Account
+    <span class="tok-green">✓</span> [WEB.4] auto-renew, 24 hours, current period, automatically
+    <span class="tok-amber">⚠</span> [WEB.7] Free trial terms — only relevant if trial offered
+
+  ═══════════════════════════════════════════════════════════
+    <span class="tok-green">Pass:</span>     61
+    <span class="tok-amber">Warn:</span>     5
+    <span class="tok-red">Fail:</span>     0
+    <span class="tok-blue">Manual:</span>   2
+
+  <span class="tok-green">✓ All checks passed — ready for submission.</span>
+</pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- PREREQS / PHILOSOPHY -->
+  <section>
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">How it works</span>
+        <h2>Runs entirely on your Mac</h2>
+        <p>Nothing is stored on external services. ASC calls go through Apple's CLI. AI calls (icons / translations) go to Gemini if you opt in.</p>
+      </div>
+
+      <div class="grid" style="grid-template-columns: 1fr;">
+        <div style="display:grid; gap:16px; grid-template-columns: 1fr; max-width: 820px; margin: 0 auto;">
+          <div class="card">
+            <div class="card-title">Prerequisite: Xcode</div>
+            <p>Everything else — <code>jq</code>, <code>asc</code> CLI, Python deps — is installed by <code>/aso init</code>. Python 3 ships with macOS.</p>
+          </div>
+          <div class="card">
+            <div class="card-title">Auth stays local</div>
+            <p>ASC uses your Xcode Apple ID (Settings → Accounts). The only secret you supply is a free Gemini API key if you want AI features.</p>
+          </div>
+          <div class="card">
+            <div class="card-title">Claude-native, terminal-friendly</div>
+            <p>Slash commands drive Claude Code; the same scripts work without Claude via <code>bash aso/run.sh &lt;command&gt;</code>.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq">
+    <div class="container" style="max-width: 820px;">
+      <div class="section-head">
+        <span class="eyebrow">FAQ</span>
+        <h2>Frequently asked</h2>
+      </div>
+
+      <details class="faq" open>
+        <summary>What is ASO Toolkit, exactly?</summary>
+        <div class="faq-body">
+          A Claude Code skill that wraps the common App Store Optimization workflow for iOS and macOS apps:
+          keyword research, metadata, screenshots, AI icons, Apple Review Guidelines audit, and App Store
+          Connect sync. Each capability is a slash command like <code>/aso check</code> or <code>/aso push</code>.
+        </div>
+      </details>
+
+      <details class="faq">
+        <summary>How do I install it?</summary>
+        <div class="faq-body">
+          Clone the repo into <code>~/.claude/skills/aso</code> and restart Claude Code. Or run the
+          installer script from the repo. See the <a href="#install">Install</a> section above for the
+          exact commands.
+        </div>
+      </details>
+
+      <details class="faq">
+        <summary>Does it work without Claude Code?</summary>
+        <div class="faq-body">
+          Yes. Every subcommand has a plain shell entry point at <code>scripts/run.sh &lt;command&gt;</code>, so you can
+          use it from CI or any terminal. The Claude Code integration just gives you
+          slash commands and natural-language orchestration on top.
+        </div>
+      </details>
+
+      <details class="faq">
+        <summary>What does <code>/aso check</code> actually check?</summary>
+        <div class="faq-body">
+          Over 100 guideline items across Safety, Performance, Business, Design, Legal, Technical,
+          App Store Connect, and your Website. It scans your Swift sources recursively, reads the
+          privacy manifest and entitlements declared in config, inspects ASC metadata via the
+          <code>asc</code> CLI, and fetches your privacy / terms / support pages to verify required
+          disclosures.
+        </div>
+      </details>
+
+      <details class="faq">
+        <summary>Does it send my code or data anywhere?</summary>
+        <div class="faq-body">
+          No. The skill runs locally. It only talks to Apple (via the <code>asc</code> CLI) and, if you
+          opt in, to Gemini for AI icon / translation / screenshot generation. You bring your own keys.
+        </div>
+      </details>
+
+      <details class="faq">
+        <summary>Is it free?</summary>
+        <div class="faq-body">
+          Yes. The toolkit is MIT-licensed. You pay only for third-party services you opt into —
+          typically an App Store Connect developer account (Apple) and optionally a Gemini API key
+          (Google, has a free tier).
+        </div>
+      </details>
+
+      <details class="faq">
+        <summary>Android support?</summary>
+        <div class="faq-body">
+          Not today. Contributions welcome — the architecture is subcommand-based, so a Play Store
+          variant could slot in cleanly.
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section>
+    <div class="container">
+      <div class="cta">
+        <h3>Stop wrestling with App Store Connect.</h3>
+        <p style="margin-top: 10px;">Install the skill, run <code>/aso init</code>, and let Claude Code take it from there.</p>
+        <div class="cta-actions">
+          <a class="btn btn-primary" href="https://github.com/omerycll/claude-aso" target="_blank" rel="noopener">
+            <svg class="icon" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+            Star on GitHub
+          </a>
+          <a class="btn btn-ghost" href="#install">Get the install command</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="container">
+    <div class="foot">
+      <div class="brand">
+        <span class="brand-mark">A</span>
+        <span>ASO Toolkit</span>
+      </div>
+      <div class="foot-links">
+        <a href="https://github.com/omerycll/claude-aso" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://github.com/omerycll/claude-aso/issues" target="_blank" rel="noopener">Issues</a>
+        <a href="https://github.com/omerycll/claude-aso/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a>
+        <a href="https://claude.com/claude-code" target="_blank" rel="noopener">Claude Code</a>
+      </div>
+    </div>
+    <p class="disclaimer">
+      ASO Toolkit is an independent, unofficial project. It is not affiliated with, endorsed by, or
+      sponsored by Apple Inc., Anthropic, or Google. "App Store," "App Store Connect," and "Xcode"
+      are trademarks of Apple Inc.
+    </p>
+  </div>
+</footer>
+
+<script>
+  // Tabs
+  (function () {
+    const tabs = document.querySelectorAll('.install-tab');
+    const panels = ['tab-clone', 'tab-installer', 'tab-use'];
+    tabs.forEach(t => {
+      t.addEventListener('click', () => {
+        tabs.forEach(x => x.setAttribute('aria-selected', 'false'));
+        t.setAttribute('aria-selected', 'true');
+        const target = t.getAttribute('data-target');
+        panels.forEach(id => {
+          const el = document.getElementById(id);
+          if (!el) return;
+          if (id === target) el.removeAttribute('hidden'); else el.setAttribute('hidden', '');
+        });
+      });
+    });
+  })();
+</script>
+
+</body>
+</html>
