@@ -43,8 +43,8 @@ STYLES = {
     "glossy": "3D glossy iOS app icon. Glass/glossy material, subtle reflections, modern premium feel. 1024x1024. No text.",
     "flat": "Ultra minimal flat iOS app icon. Clean lines, no gradients, no shadows. Swiss design style. 1024x1024. No text.",
     "aura-sketch": "Hand-drawn sketch-notebook style iOS illustration. Soft cream #FAFAF7 background, lime green #D4EC5B and mint #B9E4DD accents, thin ink outline, friendly childlike character design, SF Pro Rounded feeling, pinned notebook aesthetic. Transparent background suitable for SwiftUI asset. 1024x1024. No text.",
-    "aqua-mascot": "Cute 3D rendered character illustration for a mobile app. Pixar/Disney style, soft lighting, smooth rounded shapes, expressive big eyes, friendly and approachable. Light aqua-blue ocean gradient background. No text, no UI elements. High quality 1024x1024 PNG with clean edges. The character should be suitable for use as an in-app mascot guide.",
-    "aqua-mascot-clean": "Cute 3D rendered character on a perfectly solid pure white #FFFFFF background. Pixar/Disney style, soft studio lighting, smooth rounded shapes, expressive big eyes. No shadows on background, no gradients, no floor, no environment. Character floating in center. Clean edges for easy background removal. No text. 1024x1024 PNG.",
+    "3d-mascot": "Cute 3D rendered character illustration for a mobile app. Pixar/Disney style, soft lighting, smooth rounded shapes, expressive big eyes, friendly and approachable. Soft neutral gradient background. No text, no UI elements. High quality 1024x1024 PNG with clean edges. The character should be suitable for use as an in-app mascot guide.",
+    "3d-mascot-clean": "Cute 3D rendered character on a perfectly solid pure white #FFFFFF background. Pixar/Disney style, soft studio lighting, smooth rounded shapes, expressive big eyes. No shadows on background, no gradients, no floor, no environment. Character floating in center. Clean edges for easy background removal. No text. 1024x1024 PNG.",
 }
 
 # ── AuraGLP mascot: Auri the red panda ───────────────────────────────
@@ -105,32 +105,6 @@ PRESETS = {
     "clay-bird": {
         "style": "clay",
         "character": f"A cute round bird character for education app {APP_NAME}. Warm orange #FE7648 color. Soft cream background.",
-    },
-
-    # ── Bubbly (Aqua mascot) ──────────────────────────────────────
-    "bubbly-idle": {
-        "style": "aqua-mascot-clean",
-        "character": "A cute round tropical fish character. Bright turquoise-blue body with soft teal gradient, big sparkly round eyes with white highlights, small happy smile, tiny orange-tipped fins, and a flowing translucent tail. Chubby round body shape. Friendly, cheerful expression. Facing slightly right. Full body visible.",
-    },
-    "bubbly-wave": {
-        "style": "aqua-mascot-clean",
-        "character": "A cute round tropical fish character. Bright turquoise-blue body, big sparkly eyes, happy wide smile. Waving one fin cheerfully in greeting. Small bubbles floating around. Full body visible, facing slightly right.",
-    },
-    "bubbly-excited": {
-        "style": "aqua-mascot-clean",
-        "character": "A cute round tropical fish character. Bright turquoise-blue body, big sparkly eyes wide open with excitement, mouth open in a joyful expression. Small star sparkles around. Fins raised up. Full body visible.",
-    },
-    "bubbly-thinking": {
-        "style": "aqua-mascot-clean",
-        "character": "A cute round tropical fish character. Bright turquoise-blue body, one fin on chin in a thoughtful pose, eyes looking up curiously, slight smile. A small thought bubble nearby. Full body visible.",
-    },
-    "bubbly-sleeping": {
-        "style": "aqua-mascot-clean",
-        "character": "A cute round tropical fish character. Bright turquoise-blue body, eyes peacefully closed, gentle sleeping smile, small Z letters floating above. Fins relaxed. Full body visible.",
-    },
-    "bubbly-crown": {
-        "style": "aqua-mascot-clean",
-        "character": "A cute round tropical fish character. Bright turquoise-blue body, big sparkly eyes, proud confident smile, wearing a small golden crown on top. Sparkles around the crown. Full body visible.",
     },
 
     # ── Auri (AuraGLP mascot) ───────────────────────────────────

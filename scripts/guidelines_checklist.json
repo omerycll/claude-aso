@@ -616,11 +616,5 @@
       "severity": "warn",
       "description": "Privacy policy should include contact information for privacy inquiries."
     }
-  ],
-  "urls": {
-    "privacy": "https://aqua.appdiyorki.com/privacy",
-    "terms": "https://aqua.appdiyorki.com/terms",
-    "support": "https://aqua.appdiyorki.com/contact",
-    "marketing": "https://www.instagram.com/appdiyorki"
-  }
+  ]
 }

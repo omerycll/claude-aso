@@ -126,7 +126,7 @@ bash ${CLAUDE_SKILL_DIR}/scripts/run.sh screenshots upload
 bash ${CLAUDE_SKILL_DIR}/scripts/run.sh icons generate --preset modern-blob
 ```
 
-Available presets: modern-blob, neubrutalist, clay, gradient, glossy, flat, aqua-mascot, and 20+ more.
+Available presets: modern-blob, neubrutalist, clay, gradient, glossy, flat, 3d-mascot, and more.
 
 ### Step 6: Compliance Check
 ```bash

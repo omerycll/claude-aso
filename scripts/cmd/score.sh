@@ -183,16 +183,18 @@ if urls.get("support"):
 else:
     det.append("No support URL ✗")
 
-# App icon
-icon_dir = os.path.join(PROJECT_ROOT, app.get("source_dir", ""), "Assets.xcassets", "AppIcon.appiconset")
-if os.path.isdir(icon_dir) and glob.glob(os.path.join(icon_dir, "*.png")):
+# App icon — recurse so nested Assets.xcassets catalogs are found
+src_root = os.path.join(PROJECT_ROOT, app.get("source_dir", ""))
+icon_candidates = glob.glob(os.path.join(src_root, "**", "AppIcon.appiconset"), recursive=True)
+icon_dir = next((d for d in icon_candidates if os.path.isdir(d)), "")
+if icon_dir and glob.glob(os.path.join(icon_dir, "*.png")):
     pts += 3; det.append("App icon present ✓")
 else:
     det.append("App icon not found ✗")
 
-# Privacy manifest
-privacy_manifest = os.path.join(PROJECT_ROOT, app.get("source_dir", ""), "PrivacyInfo.xcprivacy")
-if os.path.exists(privacy_manifest):
+# Privacy manifest — recurse so files kept in subfolders are detected
+pm_matches = glob.glob(os.path.join(src_root, "**", "PrivacyInfo.xcprivacy"), recursive=True)
+if pm_matches:
     pts += 2; det.append("Privacy manifest present ✓")
 else:
     det.append("Privacy manifest missing ✗")
