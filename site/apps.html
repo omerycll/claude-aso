@@ -1,0 +1,512 @@
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Apps shipping with ASO Toolkit</title>
+  <meta name="description" content="Real iOS and macOS apps submitted, localized, and released with the ASO Toolkit Claude Code skill. Add yours via pull request." />
+  <meta name="color-scheme" content="light dark" />
+
+  <meta property="og:title" content="Apps shipping with ASO Toolkit" />
+  <meta property="og:description" content="iOS and macOS apps that ship using ASO Toolkit. Add yours via PR." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://github.com/omerycll/claude-aso" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg: #ffffff;
+      --bg-soft: #fafafa;
+      --fg: #18181b;
+      --fg-muted: #52525b;
+      --fg-dim: #71717a;
+      --border: #e4e4e7;
+      --border-strong: #d4d4d8;
+      --accent: #18181b;
+      --accent-fg: #ffffff;
+      --code-bg: #f4f4f5;
+      --code-fg: #27272a;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #09090b;
+        --bg-soft: rgba(24,24,27,0.4);
+        --fg: #f4f4f5;
+        --fg-muted: #a1a1aa;
+        --fg-dim: #71717a;
+        --border: #27272a;
+        --border-strong: #3f3f46;
+        --accent: #f4f4f5;
+        --accent-fg: #09090b;
+        --code-bg: #18181b;
+        --code-fg: #e4e4e7;
+      }
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+      font-size: 16px; line-height: 1.6;
+      color: var(--fg); background: var(--bg);
+      -webkit-font-smoothing: antialiased;
+    }
+    h1, h2, h3 {
+      font-family: 'Inter Tight', 'Inter', sans-serif;
+      font-weight: 700; letter-spacing: -0.015em; margin: 0;
+    }
+    p { margin: 0; color: var(--fg-muted); }
+    a { color: inherit; text-decoration: none; }
+    code, pre { font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace; }
+
+    .container { max-width: 1152px; margin: 0 auto; padding: 0 24px; }
+
+    header.nav {
+      position: sticky; top: 0; z-index: 50;
+      backdrop-filter: saturate(180%) blur(12px);
+      -webkit-backdrop-filter: saturate(180%) blur(12px);
+      background: color-mix(in oklab, var(--bg) 85%, transparent);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      display: flex; align-items: center; justify-content: space-between;
+      height: 60px;
+    }
+    .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; letter-spacing: -0.01em; }
+    .brand-mark {
+      width: 28px; height: 28px; border-radius: 8px;
+      background: var(--fg); color: var(--bg);
+      display: grid; place-items: center; font-family: 'JetBrains Mono', monospace;
+      font-size: 13px; font-weight: 700;
+    }
+    .nav-links { display: none; gap: 28px; font-size: 14px; color: var(--fg-muted); }
+    .nav-links a:hover { color: var(--fg); }
+    .nav-links a.active { color: var(--fg); }
+    @media (min-width: 768px) { .nav-links { display: flex; } }
+
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      height: 40px; padding: 0 16px; border-radius: 10px;
+      font-size: 14px; font-weight: 500;
+      border: 1px solid transparent; cursor: pointer;
+      transition: background 0.15s ease, border-color 0.15s ease;
+    }
+    .btn-primary { background: var(--accent); color: var(--accent-fg); }
+    .btn-primary:hover { filter: brightness(0.9); }
+    .btn-ghost { border-color: var(--border-strong); color: var(--fg); }
+    .btn-ghost:hover { background: var(--bg-soft); }
+    .btn-sm { height: 32px; padding: 0 12px; font-size: 13px; border-radius: 8px; }
+
+    /* Hero */
+    .hero { padding: 72px 0 32px; }
+    .hero h1 { font-size: clamp(32px, 5vw, 48px); line-height: 1.1; }
+    .hero p.lead { margin-top: 14px; font-size: 18px; max-width: 640px; }
+    .hero-meta {
+      margin-top: 22px; display: flex; flex-wrap: wrap; gap: 12px; align-items: center;
+    }
+    .pill {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 14px; border: 1px solid var(--border); border-radius: 999px;
+      font-size: 13px; color: var(--fg-muted); background: var(--bg-soft);
+    }
+
+    /* Filters */
+    .filters {
+      display: flex; flex-wrap: wrap; gap: 8px;
+      padding: 20px 0; border-top: 1px solid var(--border);
+      margin-top: 40px;
+    }
+    .chip {
+      font-size: 13px; padding: 6px 12px; border-radius: 999px;
+      border: 1px solid var(--border); background: var(--bg);
+      color: var(--fg-muted); cursor: pointer; font-family: inherit;
+      transition: all 0.12s ease;
+    }
+    .chip:hover { border-color: var(--border-strong); color: var(--fg); }
+    .chip[aria-pressed="true"] {
+      background: var(--accent); color: var(--accent-fg); border-color: var(--accent);
+    }
+    .chip .count { color: inherit; opacity: 0.6; margin-left: 4px; font-size: 12px; }
+
+    /* Grid */
+    .grid {
+      display: grid; gap: 18px;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      padding: 24px 0 48px;
+    }
+    .card {
+      border: 1px solid var(--border); border-radius: 14px;
+      background: var(--bg); overflow: hidden;
+      display: flex; flex-direction: column; gap: 0;
+      transition: transform 0.15s ease, border-color 0.15s ease;
+    }
+    .card:hover { border-color: var(--border-strong); transform: translateY(-2px); }
+    .card-link { display: contents; }
+    .card-head {
+      padding: 18px; display: flex; gap: 14px; align-items: flex-start;
+    }
+    .card-icon {
+      width: 72px; height: 72px; border-radius: 16px;
+      background: var(--bg-soft); flex: none;
+      overflow: hidden; box-shadow: 0 0 0 1px var(--border) inset;
+    }
+    .card-icon img { width: 100%; height: 100%; display: block; }
+    .card-meta { min-width: 0; flex: 1; }
+    .card-name {
+      font-weight: 600; font-size: 15.5px; color: var(--fg);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .card-dev {
+      font-size: 13px; color: var(--fg-muted); margin-top: 2px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .card-foot {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 18px; border-top: 1px solid var(--border);
+      background: var(--bg-soft); font-size: 12.5px; color: var(--fg-muted);
+    }
+    .tag {
+      font-size: 11.5px; padding: 2px 8px; border-radius: 999px;
+      border: 1px solid var(--border-strong); color: var(--fg-muted);
+    }
+
+    /* Empty state */
+    .empty {
+      border: 1px dashed var(--border-strong); border-radius: 18px;
+      padding: 64px 32px; text-align: center; color: var(--fg-muted);
+    }
+    .empty h3 { color: var(--fg); margin-bottom: 8px; }
+
+    /* Error state */
+    .error {
+      border: 1px solid #f59e0b33; background: #f59e0b11;
+      color: #92400e; padding: 14px 18px; border-radius: 10px; font-size: 14px;
+    }
+    @media (prefers-color-scheme: dark) {
+      .error { color: #fbbf24; background: #f59e0b1a; border-color: #f59e0b55; }
+    }
+
+    /* Submit section */
+    .submit {
+      border: 1px solid var(--border); border-radius: 18px;
+      padding: 32px; background: var(--bg-soft);
+      margin-top: 24px;
+    }
+    .submit h2 { font-size: clamp(22px, 3vw, 28px); }
+    .submit ol { margin: 16px 0 0; padding-left: 22px; color: var(--fg-muted); }
+    .submit ol li { margin: 6px 0; }
+    .submit pre {
+      margin: 14px 0 0; padding: 14px 16px; background: var(--code-bg); color: var(--code-fg);
+      border-radius: 10px; font-size: 13px; overflow-x: auto;
+      border: 1px solid var(--border);
+    }
+    .submit .actions { margin-top: 20px; display: flex; flex-wrap: wrap; gap: 12px; }
+
+    /* Skeleton */
+    .skeleton {
+      background: linear-gradient(90deg, var(--bg-soft), var(--border), var(--bg-soft));
+      background-size: 200% 100%;
+      animation: shimmer 1.4s linear infinite;
+    }
+    @keyframes shimmer { 0% { background-position: 200% 0 } 100% { background-position: -200% 0 } }
+
+    footer {
+      border-top: 1px solid var(--border); padding: 40px 0 64px;
+      color: var(--fg-dim); font-size: 14px; margin-top: 40px;
+    }
+    .foot { display: flex; flex-wrap: wrap; gap: 16px; justify-content: space-between; align-items: center; }
+    footer a:hover { color: var(--fg); }
+    .foot-links { display: flex; gap: 20px; flex-wrap: wrap; }
+    .disclaimer { max-width: 720px; margin-top: 16px; font-size: 12.5px; color: var(--fg-dim); }
+
+    .icon-svg { width: 16px; height: 16px; flex: none; }
+  </style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="container nav-inner">
+    <a href="/" class="brand">
+      <span class="brand-mark">A</span>
+      <span>ASO Toolkit</span>
+    </a>
+    <nav class="nav-links" aria-label="Primary">
+      <a href="/#features">Features</a>
+      <a href="/#commands">Commands</a>
+      <a href="/#demo">Demo</a>
+      <a href="/apps" class="active">Apps</a>
+      <a href="/#faq">FAQ</a>
+    </nav>
+    <div style="display:flex; gap:10px; align-items:center;">
+      <a class="btn btn-ghost btn-sm" href="https://github.com/omerycll/claude-aso" target="_blank" rel="noopener">GitHub</a>
+      <a class="btn btn-primary btn-sm" href="#submit">Add your app</a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="container">
+      <span class="pill">🚢 Wall of apps</span>
+      <h1 style="margin-top:16px;">Apps shipping with ASO&nbsp;Toolkit.</h1>
+      <p class="lead">
+        Real iOS and macOS apps that research, translate, audit, and submit through the
+        skill. Add yours — open a pull request with your App Store ID and it shows up here.
+      </p>
+
+      <div class="hero-meta">
+        <span id="appCount" class="pill">Loading…</span>
+        <a class="btn btn-primary btn-sm" href="#submit">Add your app →</a>
+      </div>
+
+      <!-- Filters -->
+      <div id="filters" class="filters" role="tablist" aria-label="Category filters"></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <div id="errorBox"></div>
+      <div id="grid" class="grid" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <!-- Submit -->
+  <section id="submit" style="scroll-margin-top: 80px;">
+    <div class="container">
+      <div class="submit">
+        <h2>Add your app</h2>
+        <p style="margin-top:8px;">
+          Submissions are just a one-line pull request. No account, no form, no gatekeeping.
+          Icon, name, developer, and category are pulled live from the App Store, so your
+          entry always reflects the latest listing.
+        </p>
+        <ol>
+          <li>Open <code>site/apps.json</code> in the repo.</li>
+          <li>Add your App Store numeric ID (the <code>id1234567890</code> from the URL).</li>
+          <li>Open a PR — we merge, Vercel redeploys, your app appears.</li>
+        </ol>
+
+<pre><span style="color: var(--fg-dim);">// site/apps.json</span>
+[
+  { "id": "1234567890" },
+  { "id": "9876543210", "submitter": "yourhandle" }
+]</pre>
+
+        <div class="actions">
+          <a class="btn btn-primary" href="https://github.com/omerycll/claude-aso/edit/main/site/apps.json" target="_blank" rel="noopener">
+            Edit apps.json on GitHub
+            <svg class="icon-svg" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 10h10M11 6l4 4-4 4"/></svg>
+          </a>
+          <a class="btn btn-ghost" href="https://github.com/omerycll/claude-aso/blob/main/site/CONTRIBUTING.md" target="_blank" rel="noopener">
+            Contribution guide
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="container">
+    <div class="foot">
+      <div class="brand">
+        <span class="brand-mark">A</span>
+        <span>ASO Toolkit</span>
+      </div>
+      <div class="foot-links">
+        <a href="/">Home</a>
+        <a href="https://github.com/omerycll/claude-aso" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://github.com/omerycll/claude-aso/issues" target="_blank" rel="noopener">Issues</a>
+        <a href="https://github.com/omerycll/claude-aso/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a>
+      </div>
+    </div>
+    <p class="disclaimer">
+      App data (name, developer, icon, category, price) is fetched from Apple's public iTunes Search API at page load.
+      ASO Toolkit is an independent, unofficial project and is not affiliated with Apple Inc.
+    </p>
+  </div>
+</footer>
+
+<script>
+(function () {
+  const grid = document.getElementById('grid');
+  const filters = document.getElementById('filters');
+  const errorBox = document.getElementById('errorBox');
+  const appCountEl = document.getElementById('appCount');
+
+  let allApps = [];   // [{id, submitter, data}]
+  let activeCategory = 'All';
+
+  function showError(msg) {
+    errorBox.innerHTML = `<div class="error">${msg}</div>`;
+  }
+
+  function skeletonCard() {
+    const el = document.createElement('div');
+    el.className = 'card';
+    el.innerHTML = `
+      <div class="card-head">
+        <div class="card-icon skeleton" style="width:72px;height:72px;"></div>
+        <div class="card-meta">
+          <div class="skeleton" style="height:14px;width:70%;border-radius:4px;margin-top:6px;"></div>
+          <div class="skeleton" style="height:12px;width:50%;border-radius:4px;margin-top:10px;"></div>
+        </div>
+      </div>
+      <div class="card-foot">
+        <div class="skeleton" style="height:12px;width:60px;border-radius:4px;"></div>
+      </div>`;
+    return el;
+  }
+
+  function render() {
+    grid.innerHTML = '';
+    const visible = activeCategory === 'All'
+      ? allApps
+      : allApps.filter(a => a.data && a.data.primaryGenreName === activeCategory);
+
+    if (visible.length === 0) {
+      const empty = document.createElement('div');
+      empty.className = 'empty';
+      empty.style.gridColumn = '1 / -1';
+      empty.innerHTML = `
+        <h3>No apps yet${activeCategory !== 'All' ? ` in "${activeCategory}"` : ''}.</h3>
+        <p>Be the first — open a PR adding your App Store ID to <code>site/apps.json</code>.</p>
+        <div style="margin-top:18px;">
+          <a class="btn btn-primary btn-sm" href="#submit">Add your app</a>
+        </div>`;
+      grid.appendChild(empty);
+      return;
+    }
+
+    visible.forEach(app => {
+      const d = app.data;
+      const card = document.createElement('a');
+      card.className = 'card card-link';
+      card.href = d.trackViewUrl;
+      card.target = '_blank';
+      card.rel = 'noopener';
+      card.innerHTML = `
+        <div class="card-head">
+          <div class="card-icon">
+            <img src="${d.artworkUrl100 || d.artworkUrl60 || ''}" alt="${(d.trackName || '').replace(/"/g, '&quot;')} icon" loading="lazy" />
+          </div>
+          <div class="card-meta">
+            <div class="card-name">${(d.trackName || 'Unknown').replace(/</g, '&lt;')}</div>
+            <div class="card-dev">${(d.sellerName || d.artistName || '').replace(/</g, '&lt;')}</div>
+            <div style="margin-top:6px;">
+              <span class="tag">${(d.primaryGenreName || 'App').replace(/</g, '&lt;')}</span>
+            </div>
+          </div>
+        </div>
+        <div class="card-foot">
+          <span>${d.formattedPrice || (d.price === 0 ? 'Free' : '')}</span>
+          <span>${d.userRatingCount ? d.userRatingCount.toLocaleString() + ' ratings' : ''}</span>
+        </div>`;
+      grid.appendChild(card);
+    });
+  }
+
+  function buildFilters() {
+    const categories = {};
+    allApps.forEach(a => {
+      if (!a.data) return;
+      const c = a.data.primaryGenreName || 'Other';
+      categories[c] = (categories[c] || 0) + 1;
+    });
+    const cats = Object.entries(categories).sort((a, b) => b[1] - a[1]);
+    filters.innerHTML = '';
+
+    const mkChip = (label, count, key) => {
+      const b = document.createElement('button');
+      b.className = 'chip';
+      b.type = 'button';
+      b.setAttribute('aria-pressed', key === activeCategory ? 'true' : 'false');
+      b.innerHTML = `${label}${count != null ? `<span class="count">${count}</span>` : ''}`;
+      b.addEventListener('click', () => {
+        activeCategory = key;
+        document.querySelectorAll('.chip').forEach(c => c.setAttribute('aria-pressed', 'false'));
+        b.setAttribute('aria-pressed', 'true');
+        render();
+      });
+      filters.appendChild(b);
+    };
+
+    mkChip('All', allApps.filter(a => a.data).length, 'All');
+    cats.forEach(([c, n]) => mkChip(c, n, c));
+  }
+
+  async function loadApps() {
+    // Show skeletons while we fetch
+    for (let i = 0; i < 6; i++) grid.appendChild(skeletonCard());
+
+    let manifest;
+    try {
+      const r = await fetch('/apps.json', { cache: 'no-cache' });
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      manifest = await r.json();
+    } catch (e) {
+      grid.innerHTML = '';
+      showError('Could not load apps.json — the wall will return shortly.');
+      appCountEl.textContent = '—';
+      return;
+    }
+
+    if (!Array.isArray(manifest) || manifest.length === 0) {
+      grid.innerHTML = '';
+      appCountEl.textContent = '0 apps';
+      const empty = document.createElement('div');
+      empty.className = 'empty';
+      empty.style.gridColumn = '1 / -1';
+      empty.innerHTML = `
+        <h3>No apps yet.</h3>
+        <p>Be the first — open a PR adding your App Store ID to <code>site/apps.json</code>.</p>
+        <div style="margin-top:18px;">
+          <a class="btn btn-primary btn-sm" href="#submit">Add your app</a>
+        </div>`;
+      grid.appendChild(empty);
+      return;
+    }
+
+    const ids = manifest.map(e => String(e.id || '').trim()).filter(Boolean);
+    if (ids.length === 0) { grid.innerHTML = ''; appCountEl.textContent = '0 apps'; return; }
+
+    // iTunes lookup supports batched IDs (comma-separated). Cap per call just in case.
+    const chunk = (arr, n) => Array.from({ length: Math.ceil(arr.length / n) }, (_, i) => arr.slice(i*n, (i+1)*n));
+    const batches = chunk(ids, 100);
+    const lookups = [];
+    for (const b of batches) {
+      lookups.push(
+        fetch(`https://itunes.apple.com/lookup?id=${b.join(',')}&country=us`)
+          .then(r => r.json())
+          .catch(() => ({ results: [] }))
+      );
+    }
+    const responses = await Promise.all(lookups);
+    const byId = {};
+    responses.forEach(resp => (resp.results || []).forEach(r => { byId[String(r.trackId)] = r; }));
+
+    allApps = manifest.map(e => ({
+      id: String(e.id),
+      submitter: e.submitter || null,
+      data: byId[String(e.id)] || null,
+    })).filter(a => a.data);
+
+    grid.innerHTML = '';
+    const missing = manifest.length - allApps.length;
+    if (missing > 0) {
+      showError(`${missing} app${missing === 1 ? '' : 's'} from apps.json could not be resolved against the App Store (wrong ID or not available in the US storefront).`);
+    }
+    appCountEl.textContent = `${allApps.length} app${allApps.length === 1 ? '' : 's'}`;
+    buildFilters();
+    render();
+  }
+
+  loadApps();
+})();
+</script>
+
+</body>
+</html>
