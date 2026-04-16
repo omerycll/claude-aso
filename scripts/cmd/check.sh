@@ -186,8 +186,13 @@ def check_tracking():
 
 def check_file_exists(g):
     fn = g.get("file","")
+    # Look at APP_DIR root first, then recurse — supports projects that keep
+    # PrivacyInfo.xcprivacy / Info.plist inside subfolders.
     fp = os.path.join(APP_DIR, fn)
-    if not os.path.exists(fp): return "missing", f"{fn} not found"
+    if not os.path.exists(fp):
+        matches = glob.glob(os.path.join(APP_DIR, "**", fn), recursive=True)
+        fp = matches[0] if matches else ""
+    if not fp or not os.path.exists(fp): return "missing", f"{fn} not found"
     if "PrivacyInfo" in fn:
         with open(fp) as f: content = f.read()
         return ("ok",f"{fn} with API declarations") if "NSPrivacyAccessedAPITypes" in content else ("incomplete",f"{fn} missing API declarations")
@@ -219,8 +224,10 @@ def check_subscription():
     return ("incomplete","; ".join(issues)) if issues else ("ok","Subscriptions properly implemented")
 
 def check_app_icon():
-    icon_dir = os.path.join(APP_DIR, "Assets.xcassets", "AppIcon.appiconset")
-    if not os.path.isdir(icon_dir): return "missing", "AppIcon.appiconset not found"
+    # AppIcon.appiconset may live under any Assets.xcassets in the source tree.
+    candidates = glob.glob(os.path.join(APP_DIR, "**", "AppIcon.appiconset"), recursive=True)
+    icon_dir = next((d for d in candidates if os.path.isdir(d)), "")
+    if not icon_dir: return "missing", "AppIcon.appiconset not found"
     pngs = glob.glob(os.path.join(icon_dir, "*.png"))
     if not pngs: return "missing", "No icon PNGs"
     for png in pngs:
@@ -310,8 +317,20 @@ def check_asc_app_info():
     return ("incomplete","; ".join(issues[:3])) if issues else ("ok",f"All {len(info)} locales valid")
 
 def check_asc_copyright():
-    raw = run_asc(["versions","update","--version-id",VERSION_ID,"--copyright",f"2026 {APP_NAME}"])
-    return ("ok",f"Copyright verified") if raw else ("missing","Copyright not set")
+    # Read-only: fetch the version and inspect copyright. Previously this
+    # called `versions update` with a hardcoded "2026 <App>" value, which
+    # silently mutated ASC data every time the checker ran.
+    raw = run_asc(["versions","view","--version-id",VERSION_ID,"--output","json"])
+    if not raw: return "unavailable", "No ASC data"
+    try:
+        data = json.loads(raw)
+        if isinstance(data, list): data = data[0] if data else {}
+        if isinstance(data, dict) and "data" in data: data = data["data"]
+        if isinstance(data, list): data = data[0] if data else {}
+        cp = (data.get("attributes", {}) if isinstance(data, dict) else {}).get("copyright", "") or ""
+    except Exception:
+        return "unavailable", "Could not parse ASC response"
+    return ("ok", f"Copyright: {cp}") if cp.strip() else ("missing", "Copyright not set")
 
 def check_asc_screenshots():
     locs = get_version_localizations()
@@ -397,7 +416,7 @@ def run_check(g):
         return ("pass",d) if s=="ok" else ("warn",d) if s=="unavailable" else ("fail",d)
     elif t == "asc_copyright":
         s, d = check_asc_copyright()
-        return ("pass",d) if s=="ok" else ("fail",d)
+        return ("pass",d) if s=="ok" else ("warn",d) if s=="unavailable" else ("fail",d)
     elif t == "asc_screenshots":
         s, d = check_asc_screenshots()
         return ("pass",d) if s=="ok" else ("warn",d)
